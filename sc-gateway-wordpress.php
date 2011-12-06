@@ -75,10 +75,10 @@ class SC_Gateway_Wordpress
 	
 	static function connect()
 	{
-		$openid 			= new LightOpenID;
-		$openid->identity 	= urldecode($_GET['wordpress_blog_url']);
-		$openid->required 	= array('namePerson', 'namePerson/friendly', 'contact/email');
-		$openid->returnUrl 	= SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
+		$openid             = new LightOpenID;
+		$openid->identity   = urldecode($_GET['wordpress_blog_url']);
+		$openid->required   = array('namePerson', 'namePerson/friendly', 'contact/email');
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
 		header('Location: ' . $openid->authUrl());
 	}
 	
@@ -90,8 +90,8 @@ class SC_Gateway_Wordpress
 			return _e( 'You have cancelled this login. Please close this window and try again.', 'social-connect' );
 		}
 	
-		$openid 			= new LightOpenID;
-		$openid->returnUrl 	= SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
+		$openid             = new LightOpenID;
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
 		
 		try
 		{
@@ -106,11 +106,11 @@ class SC_Gateway_Wordpress
 			return;
 		}
 
-		$wordpress_id 	= $openid->identity;
-		$attributes 	= $openid->getAttributes();
-		$email 			= isset($attributes['contact/email']) ? $attributes['contact/email'] : '';
-		$name 			= isset($attributes['namePerson']) ? $attributes['namePerson'] : '';
-		$signature 		= SC_Utils::generate_signature($wordpress_id);
+		$wordpress_id   = $openid->identity;
+		$attributes     = $openid->getAttributes();
+		$email          = isset($attributes['contact/email']) ? $attributes['contact/email'] : '';
+		$name           = isset($attributes['namePerson']) ? $attributes['namePerson'] : '';
+		$signature      = SC_Utils::generate_signature($wordpress_id);
 		
 		if($email == '')
 		{
@@ -120,18 +120,18 @@ class SC_Gateway_Wordpress
 		?>
 		<html>
 		<head>
-			<script>
-				function init() {
-					window.opener.wp_social_connect({
-						'action' : 'social_connect', 'social_connect_provider' : 'wordpress',
-						'social_connect_signature' : '<?php echo $signature ?>',
-						'social_connect_openid_identity' : '<?php echo $wordpress_id ?>',
-						'social_connect_email' : '<?php echo $email ?>',
-						'social_connect_name' : '<?php echo $name ?>'
-					});
-					window.close();
-				}
-			</script>
+		<script>
+		function init() {
+			window.opener.wp_social_connect({
+				'action' : 'social_connect', 'social_connect_provider' : 'wordpress',
+				'social_connect_signature' : '<?php echo $signature ?>',
+				'social_connect_openid_identity' : '<?php echo $wordpress_id ?>',
+				'social_connect_email' : '<?php echo $email ?>',
+				'social_connect_name' : '<?php echo $name ?>'
+			});
+			window.close();
+		}
+		</script>
 		</head>
 		<body onload="init();"></body>
 		</html>      
@@ -140,37 +140,37 @@ class SC_Gateway_Wordpress
 	
 	static function process_login()
 	{
-		$redirect_to 			= SC_Utils::redirect_to();
-		$provider_identity 		= $_REQUEST[ 'social_connect_openid_identity' ];
-		$provided_signature 	= $_REQUEST[ 'social_connect_signature' ];
+		$redirect_to            = SC_Utils::redirect_to();
+		$provider_identity      = $_REQUEST[ 'social_connect_openid_identity' ];
+		$provided_signature     = $_REQUEST[ 'social_connect_signature' ];
 		
 		SC_Utils::verify_signature( $provider_identity, $provided_signature, $redirect_to );
 		
-		$email 	= $_REQUEST[ 'social_connect_email' ];
-		$name 	= $_REQUEST[ 'social_connect_name' ];
+		$email  = $_REQUEST[ 'social_connect_email' ];
+		$name   = $_REQUEST[ 'social_connect_name' ];
 		
 		if (empty($name))
 		{
-			$names 		= explode('@',$email);
-			$name 		= $names[0];
-			$first_name 	= $names[0];
-			$last_name 	= '';
+			$names      = explode('@',$email);
+			$name       = $names[0];
+			$first_name  = $names[0];
+			$last_name  = '';
 		}
 			else
 		{
-			$names 		= explode(' ',$name);
-			$first_name 	= array_shift($names);
-			$last_name 	= implode(' ',$names);
+			$names      = explode(' ',$name);
+			$first_name  = array_shift($names);
+			$last_name  = implode(' ',$names);
 		}
 		
 		return (object) array(
 			'provider_identity' => $provider_identity,
-			'email' 			=> $email,
-			'first_name' 		=> $first_name,
-			'last_name' 		=> $last_name,
-			'profile_url'		=> '',
-			'name' 				=> $name,
-			'user_login' 		=> strtolower( $first_name.$last_name )
+			'email'             => $email,
+			'first_name'         => $first_name,
+			'last_name'         => $last_name,
+			'profile_url'        => '',
+			'name'              => $name,
+			'user_login'        => strtolower( $first_name.$last_name )
 		);
 	}
 	
