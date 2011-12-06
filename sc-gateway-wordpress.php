@@ -153,22 +153,22 @@ class SC_Gateway_Wordpress
 		{
 			$names      = explode('@',$email);
 			$name       = $names[0];
-			$first_name  = $names[0];
+			$first_name = $names[0];
 			$last_name  = '';
 		}
 			else
 		{
 			$names      = explode(' ',$name);
-			$first_name  = array_shift($names);
+			$first_name = array_shift($names);
 			$last_name  = implode(' ',$names);
 		}
 		
 		return (object) array(
 			'provider_identity' => $provider_identity,
 			'email'             => $email,
-			'first_name'         => $first_name,
+			'first_name'        => $first_name,
 			'last_name'         => $last_name,
-			'profile_url'        => '',
+			'profile_url'       => '',
 			'name'              => $name,
 			'user_login'        => strtolower( $first_name.$last_name )
 		);
