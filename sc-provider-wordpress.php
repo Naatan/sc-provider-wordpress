@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: Social Connect - Wordpress.com Gateway
+Plugin Name: Social Connect - Wordpress.com Provider
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allows you to login / register with Wordpress.com - REQUIRES Social Connect plugin
 Version: 0.10
@@ -12,12 +12,12 @@ License: GPL2
 
 require_once dirname(__FILE__) . '/openid.php';
 
-class SC_Gateway_Wordpress 
+class SC_Provider_Wordpress 
 {
 	
 	static function init()
 	{
-		add_action('social_connect_button_list',array('SC_Gateway_Wordpress','render_button'));
+		add_action('social_connect_button_list',array('SC_Provider_Wordpress','render_button'));
 	}
 	
 	static function call()
@@ -27,7 +27,7 @@ class SC_Gateway_Wordpress
 			return;
 		}
 		
-		call_user_func(array('SC_Gateway_Wordpress', $_GET['call']));
+		call_user_func(array('SC_Provider_Wordpress', $_GET['call']));
 	}
 	
 	static function render_button()
@@ -37,7 +37,7 @@ class SC_Gateway_Wordpress
 		<a href="javascript:void(0);" title="WordPress.com" class="social_connect_login_wordpress"><img alt="Wordpress.com" src="<?php echo $image_url ?>" /></a>
 		
 		<div id="social_connect_wordpress_auth" style="display: none;">
-			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&gateway=wordpress' ); ?>" />
+			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&provider=wordpress' ); ?>" />
 		</div>
 		
 		<div class="social_connect_wordpress_form" title="WordPress" style="display: none;">
@@ -78,7 +78,7 @@ class SC_Gateway_Wordpress
 		$openid             = new LightOpenID;
 		$openid->identity   = urldecode($_GET['wordpress_blog_url']);
 		$openid->required   = array('namePerson', 'namePerson/friendly', 'contact/email');
-		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?provider=wordpress&call=callback';
 		header('Location: ' . $openid->authUrl());
 	}
 	
@@ -91,7 +91,7 @@ class SC_Gateway_Wordpress
 		}
 	
 		$openid             = new LightOpenID;
-		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=wordpress&call=callback';
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?provider=wordpress&call=callback';
 		
 		try
 		{
@@ -168,7 +168,7 @@ class SC_Gateway_Wordpress
 			'email'             => $email,
 			'first_name'        => $first_name,
 			'last_name'         => $last_name,
-			'profile_url'       => '',
+			'profile_url'       => $provider_identity,
 			'name'              => $name,
 			'user_login'        => strtolower( $first_name.$last_name )
 		);
@@ -176,4 +176,4 @@ class SC_Gateway_Wordpress
 	
 }
 
-SC_Gateway_Wordpress::init();
+SC_Provider_Wordpress::init();
